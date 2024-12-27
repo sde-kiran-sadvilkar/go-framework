@@ -9,7 +9,7 @@ import (
 	"github.com/sde-kiran-sadvilkar/sope"
 )
 
-func initApp() *core {
+func initApp() *app {
 	path,err := os.Getwd()
 	if err!=nil {
 		log.Fatal(err)
@@ -26,19 +26,19 @@ func initApp() *core {
 	sop.AppName = "myapp"
 
 	appControllers := &controllers.Controllers{
-		App: sop,
+		Core: sop,
 	} 
 
 	sop.InfoLog.Println("Debug is set to", sop.Debug)
 	sop.ErrorLog.Println("Debug is set to", sop.Debug)
 
-	app:= &core{
-		App: sop,
+	app:= &app{
+		Core: sop,
 		Controllers: appControllers,
 	}
 
-	app.App.Routes = app.routes()
-	app.Models = data.New(app.App.DB.Pool)
+	app.Core.Routes = app.routes()
+	app.Models = data.New(app.Core.DB.Pool)
 	appControllers.Models = app.Models
 	
 	return app

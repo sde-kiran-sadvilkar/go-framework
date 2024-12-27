@@ -9,22 +9,22 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func (core *core) routes() *chi.Mux{
+func (app *app) routes() *chi.Mux{
 	// middleware must come before any routes
 
 
 	// add routes here
-	core.App.Routes.Get("/",core.Controllers.Home)
-	core.App.Routes.Get("/go-page", core.Controllers.GoPage)
-	core.App.Routes.Get("/jet-page", core.Controllers.JetPage)
-	core.App.Routes.Get("/sessions",core.Controllers.SessionTest)
+	app.Core.Routes.Get("/",app.Controllers.Home)
+	app.Core.Routes.Get("/go-page", app.Controllers.GoPage)
+	app.Core.Routes.Get("/jet-page", app.Controllers.JetPage)
+	app.Core.Routes.Get("/sessions",app.Controllers.SessionTest)
 	
-	core.App.Routes.Get("/users/login", core.Controllers.UserLogin)
-	core.App.Routes.Post("/users/login", core.Controllers.PostUserLogin)
-	core.App.Routes.Get("/users/logout", core.Controllers.Logout)
+	app.Core.Routes.Get("/users/login", app.Controllers.UserLogin)
+	app.Core.Routes.Post("/users/login", app.Controllers.PostUserLogin)
+	app.Core.Routes.Get("/users/logout", app.Controllers.Logout)
 
 
-	core.App.Routes.Get("/create-user", func(w http.ResponseWriter, r *http.Request) {
+	app.Core.Routes.Get("/create-user", func(w http.ResponseWriter, r *http.Request) {
 		u := data.User{
 			FirstName: "Kiran",
 			LastName: "Sadvilkar",
@@ -33,10 +33,10 @@ func (core *core) routes() *chi.Mux{
 			Password: "password",
 		}
 
-		id, err := core.Models.Users.Insert(u)
+		id, err := app.Models.Users.Insert(u)
 
 		if err != nil {
-			core.App.ErrorLog.Println(err)
+			app.Core.ErrorLog.Println(err)
 			return
 		}
 
@@ -44,10 +44,10 @@ func (core *core) routes() *chi.Mux{
 	})
 
 
-	core.App.Routes.Get("/get-all-users", func(w http.ResponseWriter, r *http.Request){
-		users, err := core.Models.Users.GetAll()
+	app.Core.Routes.Get("/get-all-users", func(w http.ResponseWriter, r *http.Request){
+		users, err := app.Models.Users.GetAll()
 		if err != nil {
-			core.App.ErrorLog.Println(err)
+			app.Core.ErrorLog.Println(err)
 			return
 		}
 		for _, x := range users {
@@ -55,30 +55,30 @@ func (core *core) routes() *chi.Mux{
 		}
 	})
 
-	core.App.Routes.Get("/get-user/{id}", func(w http.ResponseWriter, r *http.Request){
+	app.Core.Routes.Get("/get-user/{id}", func(w http.ResponseWriter, r *http.Request){
 		id, _ := strconv.Atoi(chi.URLParam(r, "id"))
 
-		u, err := core.Models.Users.Get(id)
+		u, err := app.Models.Users.Get(id)
 		if err != nil {
-			core.App.ErrorLog.Println(err)
+			app.Core.ErrorLog.Println(err)
 			return
 		}
 
 		fmt.Fprintf(w, "%s %s %s", u.FirstName, u.LastName, u.Email)
 	})
 
-	core.App.Routes.Get("/update-user/{id}", func(w http.ResponseWriter, r *http.Request) {
+	app.Core.Routes.Get("/update-user/{id}", func(w http.ResponseWriter, r *http.Request) {
 		id, _ := strconv.Atoi(chi.URLParam(r, "id"))
-		u, err := core.Models.Users.Get(id)
+		u, err := app.Models.Users.Get(id)
 		if err != nil {
-			core.App.ErrorLog.Println(err)
+			app.Core.ErrorLog.Println(err)
 			return
 		}
 
-		u.LastName = core.App.RandomString(10)
+		u.LastName = app.Core.RandomString(10)
 		err = u.Update(*u)
 		if err != nil {
-			core.App.ErrorLog.Println(err)
+			app.Core.ErrorLog.Println(err)
 			return
 		}
 
@@ -89,7 +89,7 @@ func (core *core) routes() *chi.Mux{
 
 	//static routes 
 	fileServer := http.FileServer(http.Dir("./public"))
-	core.App.Routes.Handle("/public/*", http.StripPrefix("/public",fileServer))
+	app.Core.Routes.Handle("/public/*", http.StripPrefix("/public",fileServer))
 
-	return core.App.Routes
+	return app.Core.Routes
 }

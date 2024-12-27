@@ -7,9 +7,9 @@ import "net/http"
 
 
 func (c *Controllers) UserLogin(w http.ResponseWriter, r *http.Request) {
-	err := c.App.Render.Page(w, r, "login", nil, nil)
+	err := c.Core.Render.Page(w, r, "login", nil, nil)
 	if err != nil {
-		c.App.ErrorLog.Println(err)
+		c.Core.ErrorLog.Println(err)
 	}
 }
 
@@ -40,14 +40,14 @@ func (c *Controllers) PostUserLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	c.App.Session.Put(r.Context(), "userID", user.ID)
+	c.Core.Session.Put(r.Context(), "userID", user.ID)
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 
 }
 
 func (c *Controllers) Logout(w http.ResponseWriter, r *http.Request) {
-	c.App.Session.RenewToken(r.Context())
-	c.App.Session.Remove(r.Context(), "userID")
+	c.Core.Session.RenewToken(r.Context())
+	c.Core.Session.Remove(r.Context(), "userID")
 	http.Redirect(w, r, "/users/login", http.StatusSeeOther)
 }

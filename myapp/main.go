@@ -7,8 +7,8 @@ import (
 	"github.com/sde-kiran-sadvilkar/sope"
 )
 
-type core struct {
-	App *sope.Sope
+type app struct {
+	Core *sope.Sope
 	Controllers *controllers.Controllers
 	Models data.Models
 
@@ -17,5 +17,5 @@ type core struct {
 func main() {
 
 	s :=initApp()
-	s.App.CreateServer()
+	s.Core.CreateServer()
 }
