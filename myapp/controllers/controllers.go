@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"myapp/data"
 	"net/http"
 
 	"github.com/CloudyKit/jet/v6"
@@ -9,6 +10,7 @@ import (
 
 type Controllers struct {
 	App *sope.Sope
+	Models data.Models
 }
 
 func (c *Controllers) Home (w http.ResponseWriter, r *http.Request){

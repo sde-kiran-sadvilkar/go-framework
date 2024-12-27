@@ -2,6 +2,7 @@ package main
 
 import (
 	"myapp/controllers"
+	"myapp/data"
 
 	"github.com/sde-kiran-sadvilkar/sope"
 )
@@ -9,6 +10,7 @@ import (
 type core struct {
 	App *sope.Sope
 	Controllers *controllers.Controllers
+	Models data.Models
 
 }
 

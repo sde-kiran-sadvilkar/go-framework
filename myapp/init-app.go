@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"myapp/controllers"
+	"myapp/data"
 	"os"
 
 	"github.com/sde-kiran-sadvilkar/sope"
@@ -37,6 +38,8 @@ func initApp() *core {
 	}
 
 	app.App.Routes = app.routes()
-
+	app.Models = data.New(app.App.DB.Pool)
+	appControllers.Models = app.Models
+	
 	return app
 }

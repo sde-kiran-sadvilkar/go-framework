@@ -17,7 +17,7 @@ import (
 )
 
 const version = "1.0.0"
-
+// Source of Package Execution (Sope)
 type Sope struct {
 	AppName string
 	Debug   bool
@@ -29,6 +29,7 @@ type Sope struct {
 	Render *render.Render
 	JetViews *jet.Set
 	Session *scs.SessionManager
+	DB Database
 	config config
 	
 }
@@ -38,6 +39,7 @@ type config struct{
 	renderer string
 	cookie cookieConfig
 	sessionType string
+	database databaseConfig
 }
 
 func (s *Sope) New(rootPath string) error {
@@ -77,6 +79,10 @@ func (s *Sope) New(rootPath string) error {
 	s.Version = version
 	s.RootPath = rootPath
 
+	//connect to DB
+	s.connectToDB()
+	
+
 	
 	s.config = config{
 		port: os.Getenv("PORT"),
@@ -90,6 +96,10 @@ func (s *Sope) New(rootPath string) error {
 
 		},
 		sessionType: os.Getenv("SESSION_TYPE"),
+		database: databaseConfig{
+			database: os.Getenv("DATABASE_TYPE"),
+			dsn: s.BuildDSN(),
+		},
 	}
 
 	sess := session.Session{
@@ -127,6 +137,8 @@ func (s *Sope) CreateServer(){
 		ReadTimeout: 30 * time.Second,
 		WriteTimeout: 30 * time.Second,
 	}
+
+	defer s.DB.Pool.Close()
 
 	s.InfoLog.Printf("Listening on port %s", s.config.port)
 	err := srv.ListenAndServe()
@@ -178,8 +190,33 @@ func (s *Sope) createRenderer() {
 		RootPath: s.RootPath,
 		Port: s.config.port,
 		JetViews: s.JetViews,
+		Session: s.Session,
 	}
 
 	s.Render = &render
 
+}
+
+func (s *Sope) BuildDSN() string {
+	var dsn string
+
+	switch os.Getenv("DATABASE_TYPE"){
+	case "postgres","postgresql":
+		dsn = fmt.Sprintf("host=%s port=%s user=%s dbname=%s sslmode=%s timezone=UTC connect_timeout=5",
+		os.Getenv("DATABASE_HOST"),
+		os.Getenv("DATABASE_PORT"),
+		os.Getenv("DATABASE_USER"),
+		os.Getenv("DATABASE_NAME"),
+		os.Getenv("DATABASE_SSL_MODE"))
+
+		if os.Getenv("DATABASE_PASS") != "" {
+			dsn = fmt.Sprintf("%s password=%s", dsn, os.Getenv("DATABASE_PASS"))
+		}
+	
+	default :
+
+
+	}
+
+	return dsn
 }
