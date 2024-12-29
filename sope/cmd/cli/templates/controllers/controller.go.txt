@@ -1,0 +1,10 @@
+package controllers
+
+import (
+    "net/http"
+)
+
+// $CONTROLLERNAME$ comment goes here
+func (c *Controllers) $CONTROLLERNAME$(w http.ResponseWriter, r *http.Request) {
+
+}

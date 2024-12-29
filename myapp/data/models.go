@@ -17,9 +17,9 @@ type Models struct {
 	// any models inserted here (and in the New function)
 	// are easily accessible throughout the entire application
 
-	Users User
+	// uncomment Users and Token after running make auth command
+	Users  User
 	Tokens Token
-
 }
 
 func New(databasePool *sql.DB) Models {
@@ -31,8 +31,10 @@ func New(databasePool *sql.DB) Models {
 		upper, _ = postgresql.New(db)
 	}
 
+	// uncomment Users and Token after running make auth command
 	return Models{
-		Users: User{},
+
+		Users:  User{},
 		Tokens: Token{},
 	}
 }
