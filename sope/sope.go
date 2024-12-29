@@ -105,11 +105,13 @@ func (s *Sope) New(rootPath string) error {
 		CookieName:     s.config.cookie.name,
 		SessionType:    s.config.sessionType,
 		CookieDomain:   s.config.cookie.domain,
+		DBPool:         s.DB.Pool,
 	}
 
 	s.Session = sess.InitSession()
 
 	var views *jet.Set
+
 	if s.Debug {
 		views = jet.NewSet(
 			jet.NewOSFileSystemLoader(fmt.Sprintf("%s/views", rootPath)),
